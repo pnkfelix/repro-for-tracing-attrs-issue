@@ -934,11 +934,7 @@ mod expand {
     impl VisitMut for ImplTraitEraser {
         fn visit_type_mut(&mut self, t: &mut Type) { loop { } }
     }
-    fn erase_impl_trait(ty: &Type) -> Type {
-        let mut ty = ty.clone();
-        ImplTraitEraser.visit_type_mut(&mut ty);
-        ty
-    }
+    fn erase_impl_trait(ty: &Type) -> Type { loop { } }
 }
 #[proc_macro_attribute]
 pub fn instrument(args: proc_macro::TokenStream,
@@ -953,7 +949,9 @@ pub fn instrument(args: proc_macro::TokenStream,
     instrument_precise(args.clone(),
             item.clone()).unwrap_or_else(|_err|
             instrument_speculative(args, item))
-}fn instrument_speculative(args: attr::InstrumentArgs,
+}
+
+fn instrument_speculative(args: attr::InstrumentArgs,
     item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     let input =
         match ::syn::parse_macro_input::parse::<MaybeItemFn>(item) {
@@ -988,60 +986,21 @@ struct MaybeItemFn {
 }
 #[automatically_derived]
 impl ::core::fmt::Debug for MaybeItemFn {
-    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
-        ::core::fmt::Formatter::debug_struct_field5_finish(f, "MaybeItemFn",
-            "outer_attrs", &self.outer_attrs, "inner_attrs",
-            &self.inner_attrs, "vis", &self.vis, "sig", &self.sig, "block",
-            &&self.block)
-    }
+    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result { loop { } }
 }
 #[automatically_derived]
 impl ::core::clone::Clone for MaybeItemFn {
     #[inline]
-    fn clone(&self) -> MaybeItemFn {
-        MaybeItemFn {
-            outer_attrs: ::core::clone::Clone::clone(&self.outer_attrs),
-            inner_attrs: ::core::clone::Clone::clone(&self.inner_attrs),
-            vis: ::core::clone::Clone::clone(&self.vis),
-            sig: ::core::clone::Clone::clone(&self.sig),
-            block: ::core::clone::Clone::clone(&self.block),
-        }
-    }
+    fn clone(&self) -> MaybeItemFn { loop { } }
 }
 impl MaybeItemFn {
-    fn as_ref(&self) -> MaybeItemFnRef<'_, TokenStream> {
-        MaybeItemFnRef {
-            outer_attrs: &self.outer_attrs,
-            inner_attrs: &self.inner_attrs,
-            vis: &self.vis,
-            sig: &self.sig,
-            block: &self.block,
-        }
-    }
+    fn as_ref(&self) -> MaybeItemFnRef<'_, TokenStream> { loop { } }
 }
 impl Parse for MaybeItemFn {
-    fn parse(input: ParseStream<'_>) -> syn::Result<Self> {
-        let outer_attrs = input.call(Attribute::parse_outer)?;
-        let vis: Visibility = input.parse()?;
-        let sig: Signature = input.parse()?;
-        let inner_attrs = input.call(Attribute::parse_inner)?;
-        let block: TokenStream = input.parse()?;
-        Ok(Self { outer_attrs, inner_attrs, vis, sig, block })
-    }
+    fn parse(input: ParseStream<'_>) -> syn::Result<Self> { loop { } }
 }
 impl From<ItemFn> for MaybeItemFn {
-    fn from(ItemFn { attrs, vis, sig, block }: ItemFn) -> Self {
-        let (outer_attrs, inner_attrs) =
-            attrs.into_iter().partition(|attr|
-                    attr.style == syn::AttrStyle::Outer);
-        Self {
-            outer_attrs,
-            inner_attrs,
-            vis,
-            sig,
-            block: block.to_token_stream(),
-        }
-    }
+    fn from(f: ItemFn) -> Self { loop { } }
 }
 
 struct MaybeItemFnRef<'a, B: ToTokens> {
@@ -1054,35 +1013,11 @@ struct MaybeItemFnRef<'a, B: ToTokens> {
 #[automatically_derived]
 impl<'a, B: ::core::fmt::Debug + ToTokens> ::core::fmt::Debug for
     MaybeItemFnRef<'a, B> {
-    fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result {
-        ::core::fmt::Formatter::debug_struct_field5_finish(f,
-            "MaybeItemFnRef", "outer_attrs", &self.outer_attrs, "inner_attrs",
-            &self.inner_attrs, "vis", &self.vis, "sig", &self.sig, "block",
-            &&self.block)
-    }
+        fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result { loop { } }
 }
 #[automatically_derived]
 impl<'a, B: ::core::clone::Clone + ToTokens> ::core::clone::Clone for
     MaybeItemFnRef<'a, B> {
     #[inline]
-    fn clone(&self) -> MaybeItemFnRef<'a, B> {
-        MaybeItemFnRef {
-            outer_attrs: ::core::clone::Clone::clone(&self.outer_attrs),
-            inner_attrs: ::core::clone::Clone::clone(&self.inner_attrs),
-            vis: ::core::clone::Clone::clone(&self.vis),
-            sig: ::core::clone::Clone::clone(&self.sig),
-            block: ::core::clone::Clone::clone(&self.block),
-        }
-    }
+        fn clone(&self) -> MaybeItemFnRef<'a, B> { loop { } }
 }
-const _: () =
-    {
-        extern crate proc_macro;
-        #[rustc_proc_macro_decls]
-        #[used]
-        #[allow(deprecated)]
-        static _DECLS: &[proc_macro::bridge::client::ProcMacro] =
-            &[proc_macro::bridge::client::ProcMacro::attr("instrument",
-                            instrument)];
-    };
-
