@@ -14,12 +14,16 @@ use std::prelude::rust_2018::*;
 #[macro_use]
 extern crate std;
 extern crate proc_macro;
-extern crate alloc;
 
 use proc_macro2::TokenStream;
 use quote::ToTokens;
 use syn::parse::{Parse, ParseStream};
-use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::collections::HashSet;
+use syn::{Attribute, ItemFn, Signature, Visibility};
+
+type Pts = proc_macro::TokenStream;
+
+mod attr {
+    use std::collections::HashSet;
     use syn::{
         punctuated::Punctuated, Expr, Ident, LitInt, LitStr, Path, Token,
     };
@@ -28,16 +32,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
     use syn::ext::IdentExt as _;
     use syn::parse::{Parse, ParseStream};
     pub(crate) struct InstrumentArgs {
-        level: Option<Level>,
-        pub(crate) name: Option<LitStr>,
-        target: Option<LitStr>,
-        pub(crate) parent: Option<Expr>,
-        pub(crate) follows_from: Option<Expr>,
-        pub(crate) skips: HashSet<Ident>,
-        pub(crate) skip_all: bool,
-        pub(crate) fields: Option<Fields>,
-        pub(crate) err_mode: Option<FormatMode>,
-        pub(crate) ret_mode: Option<FormatMode>,        parse_warnings: Vec<syn::Error>,
     }
     #[automatically_derived]
     impl ::core::clone::Clone for InstrumentArgs {
@@ -62,20 +56,18 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         fn parse(input: ParseStream<'_>) -> syn::Result<Self> { loop { } }
     }
     struct StrArg<T> {
-        value: LitStr,
         _p: std::marker::PhantomData<T>,
     }
     impl<T: Parse> Parse for StrArg<T> {
         fn parse(input: ParseStream<'_>) -> syn::Result<Self> { loop { } }
     }
     struct ExprArg<T> {
-        value: Expr,
         _p: std::marker::PhantomData<T>,
     }
     impl<T: Parse> Parse for ExprArg<T> {
         fn parse(input: ParseStream<'_>) -> syn::Result<Self> { loop { } }
     }
-    struct Skips(HashSet<Ident>);
+    struct Skips;
     impl Parse for Skips {
         fn parse(input: ParseStream<'_>) -> syn::Result<Self> { loop { } }
     }
@@ -115,8 +107,7 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
     impl Parse for FormatMode {
         fn parse(input: ParseStream<'_>) -> syn::Result<Self> { loop { } }
     }
-    pub(crate) struct Fields(pub(crate) Punctuated<Field,
-        ::syn::token::Comma>);
+    pub(crate) struct Fields;
     #[automatically_derived]
     impl ::core::clone::Clone for Fields {
         #[inline]
@@ -126,11 +117,7 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
     impl ::core::fmt::Debug for Fields {
         fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result { loop { } }
     }
-    pub(crate) struct Field {
-        pub(crate) name: Punctuated<Ident, ::syn::token::Dot>,
-        pub(crate) value: Option<Expr>,
-        pub(crate) kind: FieldKind,
-    }
+    pub(crate) struct Field;
     #[automatically_derived]
     impl ::core::clone::Clone for Field {
         #[inline]
@@ -196,9 +183,7 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
     }
     mod kw {
         #[allow(non_camel_case_types)]
-        pub struct fields {
-            pub span: ::syn::__private::Span,
-        }
+        pub struct fields { }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
         pub fn fields<__S: ::syn::__private::IntoSpans<[::syn::__private::Span; 1]>>(span: __S) -> fields { loop { } }
@@ -234,7 +219,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         }
         #[allow(non_camel_case_types)]
         pub struct skip {
-            pub span: ::syn::__private::Span,
         }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
@@ -271,7 +255,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         }
         #[allow(non_camel_case_types)]
         pub struct skip_all {
-            pub span: ::syn::__private::Span,
         }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
@@ -308,7 +291,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         }
         #[allow(non_camel_case_types)]
         pub struct level {
-            pub span: ::syn::__private::Span,
         }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
@@ -345,7 +327,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         }
         #[allow(non_camel_case_types)]
         pub struct target {
-            pub span: ::syn::__private::Span,
         }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
@@ -382,7 +363,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         }
         #[allow(non_camel_case_types)]
         pub struct parent {
-            pub span: ::syn::__private::Span,
         }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
@@ -419,7 +399,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         }
         #[allow(non_camel_case_types)]
         pub struct follows_from {
-            pub span: ::syn::__private::Span,
         }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
@@ -456,7 +435,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         }
         #[allow(non_camel_case_types)]
         pub struct name {
-            pub span: ::syn::__private::Span,
         }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
@@ -493,7 +471,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         }
         #[allow(non_camel_case_types)]
         pub struct err {
-            pub span: ::syn::__private::Span,
         }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
@@ -530,7 +507,6 @@ use syn::{Attribute, ItemFn, Signature, Visibility};mod attr {    use std::colle
         }
         #[allow(non_camel_case_types)]
         pub struct ret {
-            pub span: ::syn::__private::Span,
         }
         #[doc(hidden)]
         #[allow(dead_code, non_snake_case)]
@@ -623,20 +599,16 @@ mod expand {
         },
     }
     pub(crate) struct AsyncInfo<'block> {
-        source_stmt: &'block Stmt,
-        kind: AsyncKind<'block>,
-        self_type: Option<TypePath>,
-        input: &'block ItemFn,
+        state: &'block (),
     }
     impl<'block> AsyncInfo<'block> {        pub(crate) fn from_fn(input: &'block ItemFn) -> Option<Self> { loop { } }
         pub(crate) fn gen_async(self, args: InstrumentArgs,
             instrumented_function_name: &str)
-                                -> Result<proc_macro::TokenStream, syn::Error> { loop { } }
+                                -> Result<crate::Pts, syn::Error> { loop { } }
     }
     fn path_to_string(path: &Path) -> String { loop { } }
     struct IdentAndTypesRenamer<'a> {
-        types: Vec<(&'a str, TypePath)>,
-        idents: Vec<(Ident, Ident)>,
+        state: &'a (),
     }
     impl<'a> VisitMut for IdentAndTypesRenamer<'a> {
         #[allow(clippy :: cmp_owned)]
@@ -644,8 +616,7 @@ mod expand {
         fn visit_type_mut(&mut self, ty: &mut Type) { loop { } }
     }
     struct AsyncTraitBlockReplacer<'a> {
-        block: &'a Block,
-        patched_block: Block,
+        state: &'a (),
     }
     impl<'a> VisitMut for AsyncTraitBlockReplacer<'a> {
         fn visit_block_mut(&mut self, i: &mut Block) { loop { } }
@@ -656,9 +627,10 @@ mod expand {
     }
     fn erase_impl_trait(ty: &Type) -> Type { loop { } }
 }
+
 #[proc_macro_attribute]
-pub fn instrument(args: proc_macro::TokenStream,
-    item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+pub fn instrument(args: Pts,
+    item: Pts) -> Pts {
     let args =
         match ::syn::parse_macro_input::parse::<attr::InstrumentArgs>(args) {
             ::syn::__private::Ok(data) => data,
@@ -666,13 +638,15 @@ pub fn instrument(args: proc_macro::TokenStream,
                 return ::syn::__private::TokenStream::from(err.to_compile_error());
             }
         };
+
     instrument_precise(args.clone(),
             item.clone()).unwrap_or_else(|_err|
             instrument_speculative(args, item))
+
 }
 
 fn instrument_speculative(args: attr::InstrumentArgs,
-    item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    item: crate::Pts) -> crate::Pts {
     let input =
         match ::syn::parse_macro_input::parse::<MaybeItemFn>(item) {
             ::syn::__private::Ok(data) => data,
@@ -685,8 +659,8 @@ fn instrument_speculative(args: attr::InstrumentArgs,
             instrumented_function_name.as_str(), None).into()
 }
 fn instrument_precise(args: attr::InstrumentArgs,
-    item: proc_macro::TokenStream)
-    -> Result<proc_macro::TokenStream, syn::Error> {
+    item: crate::Pts)
+    -> Result<crate::Pts, syn::Error> {
     let input = syn::parse::<ItemFn>(item)?;
     let instrumented_function_name = input.sig.ident.to_string();
     if let Some(async_like) = expand::AsyncInfo::from_fn(&input) {
@@ -698,11 +672,7 @@ fn instrument_precise(args: attr::InstrumentArgs,
                 instrumented_function_name.as_str(), None).into())
 }
 struct MaybeItemFn {
-    outer_attrs: Vec<Attribute>,
-    inner_attrs: Vec<Attribute>,
-    vis: Visibility,
     sig: Signature,
-    block: TokenStream,
 }
 #[automatically_derived]
 impl ::core::fmt::Debug for MaybeItemFn {
@@ -716,6 +686,7 @@ impl ::core::clone::Clone for MaybeItemFn {
 impl MaybeItemFn {
     fn as_ref(&self) -> MaybeItemFnRef<'_, TokenStream> { loop { } }
 }
+
 impl Parse for MaybeItemFn {
     fn parse(input: ParseStream<'_>) -> syn::Result<Self> { loop { } }
 }
@@ -729,15 +700,4 @@ struct MaybeItemFnRef<'a, B: ToTokens> {
     vis: &'a Visibility,
     sig: &'a Signature,
     block: &'a B,
-}
-#[automatically_derived]
-impl<'a, B: ::core::fmt::Debug + ToTokens> ::core::fmt::Debug for
-    MaybeItemFnRef<'a, B> {
-        fn fmt(&self, f: &mut ::core::fmt::Formatter) -> ::core::fmt::Result { loop { } }
-}
-#[automatically_derived]
-impl<'a, B: ::core::clone::Clone + ToTokens> ::core::clone::Clone for
-    MaybeItemFnRef<'a, B> {
-    #[inline]
-        fn clone(&self) -> MaybeItemFnRef<'a, B> { loop { } }
 }
